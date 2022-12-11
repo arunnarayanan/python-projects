@@ -1,5 +1,6 @@
 Dear [NAME],
    You are cordially invited to the party. It is on [DATE] at [PLACE].
+   Hope you can make it! 
 
 Thanks,
 Your Host
