@@ -1,7 +1,7 @@
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate_password():
-    password.set('as@#asdby23')
+    pwd.set('as@#asdby23')
 
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
@@ -34,14 +34,14 @@ user_lbl.grid(row=2)
 
 user_entry = Entry(root, border=1, width=36)
 user_entry.grid(row=2, column=1, columnspan=2)
-user_entry.insert(0, 'arun.nara@gmail.com')
+user_entry.insert(0, 'user@demo.com')
 
 # Password
 password_lbl = Label(text='Password')
 password_lbl.grid(row=3)
 
-password = StringVar()
-password_entry = Entry(root, border=1, width=17, textvariable=password)
+pwd = StringVar()
+password_entry = Entry(root, border=1, width=17, textvariable=pwd)
 password_entry.grid(row=3, column=1)
 
 # Generate Password Btn
