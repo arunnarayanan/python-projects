@@ -1,24 +1,55 @@
+from tkinter import *
+from tkinter import messagebox
+import random
+import pyperclip
+
+
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
 
 def generate_password():
-    pwd.set('as@#asdby23')
+    letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u',
+               'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+               'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+    numbers = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
+    symbols = ['!', '#', '$', '%', '&', '(', ')', '*', '+']
 
-def add():
-    with open('data.txt', 'a') as f:
-        website = web_entry.get()
-        email = user_entry.get()
-        password = pwd.get()
+    nr_letters = random.randint(8, 10)
+    nr_symbols = random.randint(2, 4)
+    nr_numbers = random.randint(2, 4)
 
-        f.write(website + ',' + email + ',' + password + '\n')
-        web_entry.delete(0, END)
-        pwd.set('')
+    password_list = [random.choice(letters) for _ in range(nr_letters) ]
+    password_list += [random.choice(symbols) for _ in range(nr_symbols)]
+    password_list += [random.choice(numbers) for _ in range(nr_numbers)]
 
+    random.shuffle(password_list)
+    generated_pwd = ''.join(password_list)
+
+    # Copy password to clipboard
+    pyperclip.copy(generated_pwd)
+    pwd.set(generated_pwd)
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
+def save():
+    website = web_entry.get()
+    email = user_entry.get()
+    password = pwd.get()
+
+    if not (website and email and password):
+        messagebox.showerror(title='Missing Data', message='Please ensure all fields are filled in')
+        return
+
+    is_ok = messagebox.askokcancel(
+        title=website,
+        message=f'These are the details entered:\nWebsite: {website}\nEmail: {email}\nPassword: {password}\nIs it OK to Save?')
+
+    if is_ok:
+        with open('data.txt', 'a') as f:
+            f.write(f'{website} | {email} | {password} \n')
+            web_entry.delete(0, END)
+            pwd.set('')
+
 
 # ---------------------------- UI SETUP ------------------------------- #
-
-from tkinter import *
 
 root = Tk()
 
@@ -58,7 +89,7 @@ password_entry.grid(row=3, column=1)
 password_btn = Button(text='Generate Password', command=generate_password, fg="red", bg="yellow")
 password_btn.grid(row=3, column=2)
 
-add_btn = Button(text='Add', width=34, command=add).grid(row=4, column=1, columnspan=2)
+Button(text='Add', width=34, command=save).grid(row=4, column=1, columnspan=2)
 
 
 root.mainloop()
