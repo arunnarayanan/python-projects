@@ -3,6 +3,16 @@
 def generate_password():
     pwd.set('as@#asdby23')
 
+def add():
+    with open('data.txt', 'a') as f:
+        website = web_entry.get()
+        email = user_entry.get()
+        password = pwd.get()
+
+        f.write(website + ',' + email + ',' + password + '\n')
+        web_entry.delete(0, END)
+        pwd.set('')
+
 
 # ---------------------------- SAVE PASSWORD ------------------------------- #
 
@@ -48,7 +58,7 @@ password_entry.grid(row=3, column=1)
 password_btn = Button(text='Generate Password', command=generate_password, fg="red", bg="yellow")
 password_btn.grid(row=3, column=2)
 
-add_btn = Button(text='Add', width=34).grid(row=4, column=1, columnspan=2)
+add_btn = Button(text='Add', width=34, command=add).grid(row=4, column=1, columnspan=2)
 
 
 root.mainloop()
