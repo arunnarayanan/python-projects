@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 import random
 import pyperclip
+import json
 
 
 # ---------------------------- PASSWORD GENERATOR ------------------------------- #
@@ -42,12 +43,44 @@ def save():
         title=website,
         message=f'These are the details entered:\nWebsite: {website}\nEmail: {email}\nPassword: {password}\nIs it OK to Save?')
 
+    new_account_json = {
+        website: {
+            "email": email,
+            "password": password
+        }
+    }
+
     if is_ok:
-        with open('data.txt', 'a') as f:
-            f.write(f'{website} | {email} | {password} \n')
+        try:
+            with open('data.json', 'r') as fr:
+                existing_data = json.load(fr)
+        except FileNotFoundError:
+            print('File not found... creating a new one...')
+            with open('data.json', 'w') as fw:
+                json.dump(new_account_json, fw, indent=4)
+        else:
+            existing_data.update(new_account_json)
+            with open('data.json', 'w') as fw:
+                json.dump(existing_data, fw, indent=4)
+        finally:
             web_entry.delete(0, END)
             pwd.set('')
 
+
+def search():
+    search_site = web_entry.get()
+    try:
+        with open('data.json', 'r') as fr:
+            existing_data = json.load(fr)
+            site = existing_data.get(search_site)
+
+            if site:
+                messagebox.showinfo(title=search_site, message=f'User / Email: {site["email"]}\nPassword: {site["password"]}')
+            else:
+                messagebox.showwarning(title=search_site, message=f'Account doesn\'t exist!')
+    except FileNotFoundError:
+        print('Website not found')
+        messagebox.showwarning(title=search_site, message=f'Account doesn\'t exist!')
 
 # ---------------------------- UI SETUP ------------------------------- #
 
@@ -62,34 +95,37 @@ canvas.create_image(100, 100, image=lock_img)
 canvas.grid(row=0, column=1)
 
 # Website
-website_lbl = Label(text='Website')
+website_lbl = Label(text='Website: ')
 website_lbl.grid(row=1)
 
-web_entry = Entry(root, border=1, width=36)
-web_entry.grid(row=1, column=1, columnspan=2)
+web_entry = Entry(root, border=1, width=30)
+web_entry.grid(row=1, column=1)
 web_entry.focus()
 
+# Search Btn
+Button(text='Search', width=10, command=search).grid(row=1, column=2)
+
 # Email / Username
-user_lbl = Label(text='Email / Username')
+user_lbl = Label(text='Email / Username: ')
 user_lbl.grid(row=2)
 
-user_entry = Entry(root, border=1, width=36)
+user_entry = Entry(root, border=1, width=45)
 user_entry.grid(row=2, column=1, columnspan=2)
 user_entry.insert(0, 'user@demo.com')
 
 # Password
-password_lbl = Label(text='Password')
+password_lbl = Label(text='Password: ')
 password_lbl.grid(row=3)
 
 pwd = StringVar()
-password_entry = Entry(root, border=1, width=17, textvariable=pwd)
+password_entry = Entry(root, border=1, width=27, textvariable=pwd)
 password_entry.grid(row=3, column=1)
 
 # Generate Password Btn
 password_btn = Button(text='Generate Password', command=generate_password, fg="red", bg="yellow")
 password_btn.grid(row=3, column=2)
 
-Button(text='Add', width=34, command=save).grid(row=4, column=1, columnspan=2)
+Button(text='Add', width=45, command=save).grid(row=4, column=1, columnspan=2)
 
 
 root.mainloop()
